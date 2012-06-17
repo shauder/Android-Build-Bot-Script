@@ -8,8 +8,8 @@
 
 #----------------------Build Settings--------------------#
 
-# you build source code directory path
-SAUCE=/you/source/directory
+# your build source code directory path
+SAUCE=/your/source/directory
 
 DATE=`eval date +%m`-`eval date +%d`
 
