@@ -55,6 +55,6 @@ for product in $PRODUCTS
 do
 	ARRAYPOS=0
 	source build/envsetup.sh && lunch ${LunchCMD[$ARRAYPOS]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/$product/${BuildNME[$ARRAYPOS]}"-"$DATE".zip" $CLOUD/${OutputNME[$ARRAYPOS]}"-"$DATE".zip"
-	let "$ARRAYPOS += 1"
+	cp $SAUCE/out/target/product/$product/${BuildNME[$ARRAYPOS]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$ARRAYPOS]}"-"$DATE".zip"
+	(($ARRAYPOS++))
 done
