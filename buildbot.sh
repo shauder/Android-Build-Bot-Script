@@ -6,7 +6,7 @@
 # so long as you keep my name and URL in it.
 # Thanks Andy and David =D
 
-#----------------------Build Settings--------------------#
+#---------------------Build Settings------------------#
 
 # your build source code directory path
 SAUCE=/your/source/directory
@@ -17,25 +17,24 @@ DATE=`eval date +%m`-`eval date +%d`
 # (product directory name for /out/target/product/)
 # must have a matching LunchCMD, BuildNME and OutputNME 
 # for each poduct listed, maintaining the same order
-PRODUCTS="productOne productTwo productThree"
+PRODUCT[0]="productOne"
+PRODUCT[1]="productTwo"
+PRODUCT[2]="productThree"
 
 # the lunch commands you want to use seperated by a space
-declare -a LunchCMD=(
-'productOne-lunchCMD' 
-'productTwo-lunchCMD' 
-'productThree-lunchCMD')
+LunchCMD[0]="productOne-lunchCMD"
+LunchCMD[1]="productTwo-lunchCMD"
+LunchCMD[2]="productThree-lunchCMD"
 
 # the name of the built rom in the output folder
-declare -a BuildNME=(
-'productOne-Built-Rom-Name' 
-'productTwo-Built-Rom-Name' 
-'productThree-Built-Rom-Name')
+BuildNME[0]="productOne-Built-Rom-Name"
+BuildNME[1]="productTwo-Built-Rom-Name"
+BuildNME[2]="productThree-Built-Rom-Name"
 
 # new name of rom to be uploaded to cloud service
-declare -a OutputNME=(
-'productOne-Output-Rom-Name' 
-'productTwo-Output-Rom-Name' 
-'productThree-Output-Rom-Name')
+OutputNME[0]="productOne-Output-Rom-Name"
+OutputNME[0]="productTwo-Output-Rom-Name" 
+OutputNME[0]="productThree-Output-Rom-Name"
 
 # number for the -j parameter
 J=9
@@ -43,7 +42,23 @@ J=9
 # cloud storage directory
 CLOUD=/cloud/storage/directory
 
-#----------------------Build Bot Code--------------------#
+#----------------------FTP Settings--------------------#
+
+# set "FTP=y" if you want to enable FTP uploading
+FTP=y
+
+# FTP server settings
+FTPHOST[0]="host"
+FTPUSER[0]="user"
+FTPPASS[0]="password"
+FTPDIR[0]="directory"
+
+FTPHOST[1]="host"
+FTPUSER[1]="user"
+FTPPASS[1]="password"
+FTPDIR[1]="directory"
+
+#---------------------Build Bot Code-------------------#
 
 cd $SAUCE
 
@@ -51,10 +66,33 @@ repo sync
 
 make clean
 
-for product in $PRODUCTS
+for PRODUCT in "${!PRODUCTS[@]}"
 do
-	ARRAYPOS=0
-	source build/envsetup.sh && lunch ${LunchCMD[$ARRAYPOS]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/$product/${BuildNME[$ARRAYPOS]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$ARRAYPOS]}"-"$DATE".zip"
-	(($ARRAYPOS++))
+	source build/envsetup.sh && lunch ${LunchCMD[$PRODUCT]} && time make -j$J otapackage
+	cp $SAUCE/out/target/product/$product/${BuildNME[$PRODUCT]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$PRODUCT]}"-"$DATE".zip"
 done
+
+#---------------------FTP Upload Code------------------#
+
+if  [ $FTP = "y" ]; then
+	echo "Initiating FTP connection..."
+
+	cd $CLOUD
+	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
+
+for KEY in "${!FTPHOST[@]}"
+do
+	echo -e "\nConnecting to ${FTPHOST[$KEY]} with user ${FTPUSER[$KEY]}..."
+	ftp -nv <<EOF
+	open ${FTPHOST[$KEY]}
+	user ${FTPUSER[$KEY]} ${FTPPASS[$KEY]}
+	tick
+	cd ${FTPDIR[$KEY]}
+	$REMOVE
+	$ATTACH
+	quit
+EOF
+done
+
+	echo -e  "FTP transfer complete! \n"
+fi
