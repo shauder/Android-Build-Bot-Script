@@ -69,7 +69,7 @@ make clean
 for PRODUCT in "${!PRODUCT[@]}"
 do
 	source build/envsetup.sh && lunch ${LunchCMD[$PRODUCT]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/$product/${BuildNME[$PRODUCT]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$PRODUCT]}"-"$DATE".zip"
+	cp $SAUCE/out/target/product/$PRODUCT/${BuildNME[$PRODUCT]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$PRODUCT]}"-"$DATE".zip"
 done
 
 #---------------------FTP Upload Code------------------#
