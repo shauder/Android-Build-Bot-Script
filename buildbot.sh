@@ -86,7 +86,6 @@ do
 	ftp -nv <<EOF
 	open ${FTPHOST[$KEY]}
 	user ${FTPUSER[$KEY]} ${FTPPASS[$KEY]}
-	tick
 	cd ${FTPDIR[$KEY]}
 	$REMOVE
 	$ATTACH
