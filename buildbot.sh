@@ -80,19 +80,18 @@ if  [ $FTP = "y" ]; then
 	cd $CLOUD
 	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
 
-for VAL in "${!FTPHOST[@]}"
-do
-	echo -e "\nConnecting to ${FTPHOST[$VAL]} with user ${FTPUSER[$VAL]}..."
-	ftp -nv <<EOF
-	open ${FTPHOST[$VAL]}
-	user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
-	tick
-	cd ${FTPDIR[$VAL]}
-	$REMOVE
-	$ATTACH
-	quit
-EOF
-done
+	for VAL in "${!FTPHOST[@]}"
+	do
+		echo -e "\nConnecting to ${FTPHOST[$VAL]} with user ${FTPUSER[$VAL]}..."
+		ftp -nv <<EOF
+		open ${FTPHOST[$VAL]}
+		user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
+		tick
+		cd ${FTPDIR[$VAL]}
+		$ATTACH
+		quit
+	EOF
+	done
 
 	echo -e  "FTP transfer complete! \n"
 fi
