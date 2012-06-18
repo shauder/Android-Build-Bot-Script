@@ -21,10 +21,10 @@ J=9
 DATE=`eval date +%m`-`eval date +%d`
 
 # here goes the roms you would like to build
-PRODUCT[0]="toro"
-LUNCHCMD[0]="bamf_nexus-userdebug"
-BUILDNME[0]="bamf_nexus"
-OUTPUTNME[0]="bamf_nexus-toro"
+PRODUCT[0]="toro"			# phone model name (product folder name)
+LUNCHCMD[0]="bamf_nexus-userdebug"	# lunch command used for ROM
+BUILDNME[0]="bamf_nexus"		# name of the output ROM in the out folder, before "-ota-"
+OUTPUTNME[0]="bamf_nexus-toro"		# what you want the new name to be
 
 PRODUCT[1]="maguro"
 LUNCHCMD[1]="bamf_maguronexus-userdebug"
@@ -39,13 +39,13 @@ OUTPUTNME[2]="bamf_nexus-torospr"
 #----------------------FTP Settings--------------------#
 
 # set "FTP=y" if you want to enable FTP uploading
-FTP=y
+FTP=n
 
 # FTP server settings
-FTPHOST[0]="host"
-FTPUSER[0]="user"
-FTPPASS[0]="password"
-FTPDIR[0]="directory"
+FTPHOST[0]="host"	# ftp hostname
+FTPUSER[0]="user"	# ftp username 
+FTPPASS[0]="password"	# ftp password
+FTPDIR[0]="directory"	# ftp upload directory
 
 FTPHOST[1]="host"
 FTPUSER[1]="user"
