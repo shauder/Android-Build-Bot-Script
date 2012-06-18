@@ -66,13 +66,13 @@ repo sync
 
 make clean
 
-for PRODUCT in "${!PRODUCT[@]}"
+for VAL in "${!PRODUCT[@]}"
 do
-	source build/envsetup.sh && lunch ${LunchCMD[$PRODUCT]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/$PRODUCT/${BuildNME[$PRODUCT]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$PRODUCT]}"-"$DATE".zip"
+	source build/envsetup.sh && lunch ${LunchCMD[$VAL]} && time make -j$J otapackage
+	cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BuildNME[$VAL]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$VAL]}"-"$DATE".zip"
 done
 
-#---------------------FTP Upload Code------------------#
+#----------------------FTP Upload Code--------------------#
 
 if  [ $FTP = "y" ]; then
 	echo "Initiating FTP connection..."
@@ -80,13 +80,14 @@ if  [ $FTP = "y" ]; then
 	cd $CLOUD
 	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
 
-for KEY in "${!FTPHOST[@]}"
+for VAL in "${!FTPHOST[@]}"
 do
-	echo -e "\nConnecting to ${FTPHOST[$KEY]} with user ${FTPUSER[$KEY]}..."
+	echo -e "\nConnecting to ${FTPHOST[$VAL]} with user ${FTPUSER[$VAL]}..."
 	ftp -nv <<EOF
-	open ${FTPHOST[$KEY]}
-	user ${FTPUSER[$KEY]} ${FTPPASS[$KEY]}
-	cd ${FTPDIR[$KEY]}
+	open ${FTPHOST[$VAL]}
+	user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
+	tick
+	cd ${FTPDIR[$VAL]}
 	$REMOVE
 	$ATTACH
 	quit
