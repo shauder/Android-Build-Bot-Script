@@ -86,7 +86,6 @@ if  [ $FTP = "y" ]; then
 		ftp -nv <<EOF
 		open ${FTPHOST[$VAL]}
 		user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
-		tick
 		cd ${FTPDIR[$VAL]}
 		$ATTACH
 		quit
