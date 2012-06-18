@@ -11,36 +11,30 @@
 # your build source code directory path
 SAUCE=/your/source/directory
 
-DATE=`eval date +%m`-`eval date +%d`
-
-# products, seperated by a space, you are building for 
-# (product directory name for /out/target/product/)
-# must have a matching LunchCMD, BuildNME and OutputNME 
-# for each poduct listed, maintaining the same order
-PRODUCT[0]="productOne"
-PRODUCT[1]="productTwo"
-PRODUCT[2]="productThree"
-
-# the lunch commands you want to use seperated by a space
-LunchCMD[0]="productOne-lunchCMD"
-LunchCMD[1]="productTwo-lunchCMD"
-LunchCMD[2]="productThree-lunchCMD"
-
-# the name of the built rom in the output folder
-BuildNME[0]="productOne-Built-Rom-Name"
-BuildNME[1]="productTwo-Built-Rom-Name"
-BuildNME[2]="productThree-Built-Rom-Name"
-
-# new name of rom to be uploaded to cloud service
-OutputNME[0]="productOne-Output-Rom-Name"
-OutputNME[0]="productTwo-Output-Rom-Name" 
-OutputNME[0]="productThree-Output-Rom-Name"
+# cloud storage directory (can be non-cloud storage folder)
+CLOUD=/cloud/storage/directory
 
 # number for the -j parameter
 J=9
 
-# cloud storage directory
-CLOUD=/cloud/storage/directory
+# leave alone
+DATE=`eval date +%m`-`eval date +%d`
+
+# here goes the roms you would like to build
+PRODUCT[0]="toro"
+LUNCHCMD[0]="bamf_nexus-userdebug"
+BUILDNME[0]="bamf_nexus"
+OUTPUTNME[0]="bamf_nexus-toro"
+
+PRODUCT[1]="maguro"
+LUNCHCMD[1]="bamf_maguronexus-userdebug"
+BUILDNME[1]="bamf_maguronexus"
+OUTPUTNME[1]="bamf_nexus-maguro"
+
+PRODUCT[2]="torospr"
+LUNCHCMD[2]="bamf_nexus_spr-userdebug"
+BUILDNME[2]="bamf_nexus_spr"
+OUTPUTNME[2]="bamf_nexus-torospr"
 
 #----------------------FTP Settings--------------------#
 
@@ -68,8 +62,8 @@ make clean
 
 for VAL in "${!PRODUCT[@]}"
 do
-	source build/envsetup.sh && lunch ${LunchCMD[$VAL]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BuildNME[$VAL]}"-ota-"$DATE".zip" $CLOUD/${OutputNME[$VAL]}"-"$DATE".zip"
+	source build/envsetup.sh && lunch ${LUNCHCMD[$VAL]} && time make -j$J otapackage
+	cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $CLOUD/${OUTPUTNME[$VAL]}"-"$DATE".zip"
 done
 
 #----------------------FTP Upload Code--------------------#
