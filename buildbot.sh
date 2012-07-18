@@ -4,21 +4,23 @@
 # http://shanefaulkner.com
 # You are free to modify and distribute this code,
 # so long as you keep my name and URL in it.
-# Thanks Andy and David =D
 
 #---------------------Build Settings------------------#
 
 # your build source code directory path
 SAUCE=/your/source/directory
 
+# should they be uploaded to dropbox?
+CLOUD=y
+
+# generate an MD5
+MD5=y
+
 # cloud storage directory (can be non-cloud storage folder)
-CLOUD=/cloud/storage/directory
+CLOUDDIR=/cloud/storage/directory
 
 # number for the -j parameter
 J=9
-
-# leave alone
-DATE=`eval date +%m`-`eval date +%d`
 
 # here goes the roms you would like to build
 PRODUCT[0]="toro"			# phone model name (product folder name)
@@ -31,10 +33,13 @@ LUNCHCMD[1]="bamf_maguronexus-userdebug"
 BUILDNME[1]="bamf_maguronexus"
 OUTPUTNME[1]="bamf_nexus-maguro"
 
-PRODUCT[2]="torospr"
+PRODUCT[2]="toroplus"
 LUNCHCMD[2]="bamf_nexus_spr-userdebug"
 BUILDNME[2]="bamf_nexus_spr"
 OUTPUTNME[2]="bamf_nexus-torospr"
+
+# leave alone
+DATE=`eval date +%m`-`eval date +%d`
 
 #----------------------FTP Settings--------------------#
 
@@ -54,16 +59,38 @@ FTPDIR[1]="directory"
 
 #---------------------Build Bot Code-------------------#
 
+
+echo -n "Moving to source directory..."
 cd $SAUCE
+echo "done!"
 
-repo sync
+echo -n "Syncing repositories..."
+#repo sync
+echo "done!"
 
-make clean
+#make clean
 
 for VAL in "${!PRODUCT[@]}"
 do
-	source build/envsetup.sh && lunch ${LUNCHCMD[$VAL]} && time make -j$J otapackage
-	cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $CLOUD/${OUTPUTNME[$VAL]}"-"$DATE".zip"
+	echo -n "Starting build..."
+	#source build/envsetup.sh && lunch ${LUNCHCMD[$VAL]} && time make -j$J otapackage
+	echo "done!"
+
+	if [ $MD5 = "y" ]; then
+		echo -n "Generating MD5..."
+		md5sum $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" > $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt"
+		echo "done!"
+	fi
+
+	if  [ $CLOUD = "y" ]; then
+		echo -n "Moving to cloud storage directory..."
+		cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $CLOUDDIR/${OUTPUTNME[$VAL]}"-"$DATE".zip"
+		if [ $MD5 = "y" ]; then
+			cp $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt" $CLOUDDIR/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt"
+		fi
+		echo "done!"
+	fi
+
 done
 
 #----------------------FTP Upload Code--------------------#
@@ -71,20 +98,25 @@ done
 if  [ $FTP = "y" ]; then
 	echo "Initiating FTP connection..."
 
-	cd $CLOUD
+	cd $CLOUDDIR
 	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
+	ATTACH2=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
 
-	for VAL in "${!FTPHOST[@]}"
-	do
-		echo -e "\nConnecting to ${FTPHOST[$VAL]} with user ${FTPUSER[$VAL]}..."
-		ftp -nv <<EOF
-		open ${FTPHOST[$VAL]}
-		user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
-		cd ${FTPDIR[$VAL]}
-		$ATTACH
-		quit
-	EOF
-	done
+for VAL in "${!FTPHOST[@]}"
+do
+	echo -e "\nConnecting to ${FTPHOST[$VAL]} with user ${FTPUSER[$VAL]}..."
+	ftp -nv <<EOF
+	open ${FTPHOST[$VAL]}
+	user ${FTPUSER[$VAL]} ${FTPPASS[$VAL]}
+	tick
+	cd ${FTPDIR[$VAL]}
+	$ATTACH
+	$ATTACH2
+	quit
+EOF
+done
 
 	echo -e  "FTP transfer complete! \n"
 fi
+
+echo "Done building!"
