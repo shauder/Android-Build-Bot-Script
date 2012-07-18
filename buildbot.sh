@@ -8,13 +8,13 @@
 #---------------------Build Settings------------------#
 
 # your build source code directory path
-SAUCE=/your/source/directory
-
-# should they be uploaded to dropbox?
-CLOUD=y
+SAUCE=/home/shauder/TBParadigm
 
 # generate an MD5
 MD5=y
+
+# should they be uploaded to dropbox?
+CLOUD=y
 
 # cloud storage directory (can be non-cloud storage folder)
 CLOUDDIR=/cloud/storage/directory
@@ -78,7 +78,7 @@ do
 
 	if [ $MD5 = "y" ]; then
 		echo -n "Generating MD5..."
-		md5sum $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" > $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt"
+		md5sum $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" | sed 's|'$SAUCE'/out/target/product/'${PRODUCT[$VAL]}'/||g' > $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt"
 		echo "done!"
 	fi
 
@@ -100,7 +100,9 @@ if  [ $FTP = "y" ]; then
 
 	cd $CLOUDDIR
 	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
-	ATTACH2=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
+if [ $MD5 = "y" ]; then	
+	ATTACHMD5=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
+fi
 
 for VAL in "${!FTPHOST[@]}"
 do
@@ -111,7 +113,9 @@ do
 	tick
 	cd ${FTPDIR[$VAL]}
 	$ATTACH
-	$ATTACH2
+if [ $MD5 = "y" ]; then
+	$ATTACHMD5
+fi
 	quit
 EOF
 done
