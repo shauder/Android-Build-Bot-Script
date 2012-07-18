@@ -65,15 +65,15 @@ cd $SAUCE
 echo "done!"
 
 echo -n "Syncing repositories..."
-#repo sync
+repo sync
 echo "done!"
 
-#make clean
+make clean
 
 for VAL in "${!PRODUCT[@]}"
 do
 	echo -n "Starting build..."
-	#source build/envsetup.sh && lunch ${LUNCHCMD[$VAL]} && time make -j$J otapackage
+	source build/envsetup.sh && lunch ${LUNCHCMD[$VAL]} && time make -j$J otapackage
 	echo "done!"
 
 	if [ $MD5 = "y" ]; then
