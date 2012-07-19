@@ -5,33 +5,8 @@
 # You are free to modify and distribute this code,
 # so long as you keep my name and URL in it.
 
-#---------------------Build Settings------------------#
+#-------------------ROMS To Be Built------------------#
 
-# your build source code directory path
-SAUCE=/home/shauder/TBParadigm
-
-# generate an MD5
-MD5=y
-
-# sync repositories
-SYNC=y
-
-# run make clean first
-CLEAN=y
-
-# should they be moved out of the output folder
-# like a dropbox or other cloud storage folder
-# or any other folder you want
-# also required for FTP upload
-MOVE=y
-
-# folder they should be moved to
-STORAGE=/cloud/storage/directory
-
-# number for the -j parameter
-J=9
-
-# here goes the roms you would like to build
 PRODUCT[0]="toro"			# phone model name (product folder name)
 LUNCHCMD[0]="bamf_nexus-userdebug"	# lunch command used for ROM
 BUILDNME[0]="bamf_nexus"		# name of the output ROM in the out folder, before "-ota-"
@@ -46,6 +21,32 @@ PRODUCT[2]="toroplus"
 LUNCHCMD[2]="bamf_nexus_spr-userdebug"
 BUILDNME[2]="bamf_nexus_spr"
 OUTPUTNME[2]="bamf_nexus-torospr"
+
+#---------------------Build Settings------------------#
+
+# should they be moved out of the output folder
+# like a dropbox or other cloud storage folder
+# or any other folder you want
+# also required for FTP upload
+MOVE=y
+
+# folder they should be moved to
+STORAGE=/cloud/storage/directory
+
+# your build source code directory path
+SAUCE=/home/shauder/TBParadigm
+
+# number for the -j parameter
+J=9
+
+# generate an MD5
+MD5=y
+
+# sync repositories
+SYNC=y
+
+# run make clean first
+CLEAN=y
 
 # leave alone
 DATE=`eval date +%m`-`eval date +%d`
