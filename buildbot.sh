@@ -13,6 +13,12 @@ SAUCE=/home/shauder/TBParadigm
 # generate an MD5
 MD5=y
 
+# sync repositories
+SYNC=y
+
+# run make clean first
+CLEAN=y
+
 # should they be uploaded to dropbox?
 CLOUD=y
 
@@ -44,6 +50,7 @@ DATE=`eval date +%m`-`eval date +%d`
 #----------------------FTP Settings--------------------#
 
 # set "FTP=y" if you want to enable FTP uploading
+# must have moving to cloud storage folder enabled
 FTP=n
 
 # FTP server settings
@@ -59,16 +66,21 @@ FTPDIR[1]="directory"
 
 #---------------------Build Bot Code-------------------#
 
-
 echo -n "Moving to source directory..."
 cd $SAUCE
 echo "done!"
 
-echo -n "Syncing repositories..."
-repo sync
-echo "done!"
+if [ $SYNC = "y" ]; then
+	echo -n "Running repo sync..."
+	repo sync
+	echo "done!"
+fi
 
-make clean
+if [ $CLEAN = "y" ]; then
+	echo -n "Running make clean..."
+	make clean
+	echo "done!"
+fi
 
 for VAL in "${!PRODUCT[@]}"
 do
@@ -99,10 +111,11 @@ if  [ $FTP = "y" ]; then
 	echo "Initiating FTP connection..."
 
 	cd $CLOUDDIR
-	ATTACH=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
-if [ $MD5 = "y" ]; then	
-	ATTACHMD5=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
-fi
+	ATTACHROM=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
+	if [ $MD5 = "y" ]; then
+		ATTACHMD5=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
+	fi
+	ATTACH=$ATTACHROM"/n"$ATTACHMD5
 
 for VAL in "${!FTPHOST[@]}"
 do
@@ -113,9 +126,6 @@ do
 	tick
 	cd ${FTPDIR[$VAL]}
 	$ATTACH
-if [ $MD5 = "y" ]; then
-	$ATTACHMD5
-fi
 	quit
 EOF
 done
@@ -123,4 +133,4 @@ done
 	echo -e  "FTP transfer complete! \n"
 fi
 
-echo "Done building!"
+echo "All done!"
