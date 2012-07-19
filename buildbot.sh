@@ -23,7 +23,8 @@ CLEAN=y
 CLOUD=y
 
 # cloud storage directory (can be non-cloud storage folder)
-CLOUDDIR=/cloud/storage/directory
+# needed for FTP upload
+STORAGE=/cloud/storage/directory
 
 # number for the -j parameter
 J=9
@@ -50,7 +51,7 @@ DATE=`eval date +%m`-`eval date +%d`
 #----------------------FTP Settings--------------------#
 
 # set "FTP=y" if you want to enable FTP uploading
-# must have moving to cloud storage folder enabled
+# must have moving to storage folder enabled first
 FTP=n
 
 # FTP server settings
@@ -96,9 +97,9 @@ do
 
 	if  [ $CLOUD = "y" ]; then
 		echo -n "Moving to cloud storage directory..."
-		cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $CLOUDDIR/${OUTPUTNME[$VAL]}"-"$DATE".zip"
+		cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $STORAGE/${OUTPUTNME[$VAL]}"-"$DATE".zip"
 		if [ $MD5 = "y" ]; then
-			cp $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt" $CLOUDDIR/${OUTPUTNME[$VAL]}"-ota-"$DATE".md5sum.txt"
+			cp $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt" $STORAGE/${OUTPUTNME[$VAL]}"-ota-"$DATE".md5sum.txt"
 		fi
 		echo "done!"
 	fi
@@ -110,12 +111,16 @@ done
 if  [ $FTP = "y" ]; then
 	echo "Initiating FTP connection..."
 
-	cd $CLOUDDIR
+	cd $STORAGE
 	ATTACHROM=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
 	if [ $MD5 = "y" ]; then
 		ATTACHMD5=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
 	fi
-	ATTACH=$ATTACHROM"/n"$ATTACHMD5
+	if [ $MD5 = "y" ]; then
+		ATTACH=$ATTACHROM"/n"$ATTACHMD5
+	else
+		ATTACH=$ATTACHROM
+	fi
 
 for VAL in "${!FTPHOST[@]}"
 do
