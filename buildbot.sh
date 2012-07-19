@@ -119,8 +119,6 @@ if  [ $FTP = "y" ]; then
 	ATTACHROM=`for file in *"-"$DATE".zip"; do echo -n -e "put ${file}\n"; done`
 	if [ $MD5 = "y" ]; then
 		ATTACHMD5=`for file in *"-"$DATE".md5sum.txt"; do echo -n -e "put ${file}\n"; done`
-	fi
-	if [ $MD5 = "y" ]; then
 		ATTACH=$ATTACHROM"/n"$ATTACHMD5
 	else
 		ATTACH=$ATTACHROM
