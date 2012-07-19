@@ -4,6 +4,7 @@
 # http://shanefaulkner.com
 # You are free to modify and distribute this code,
 # so long as you keep my name and URL in it.
+# Lots of thanks go out to TeamBAMF
 
 #-------------------ROMS To Be Built------------------#
 
