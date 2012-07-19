@@ -19,11 +19,13 @@ SYNC=y
 # run make clean first
 CLEAN=y
 
-# should they be uploaded to dropbox?
-CLOUD=y
+# should they be moved out of the output folder
+# like a dropbox or other cloud storage folder
+# or any other folder you want
+# also required for FTP upload
+MOVE=y
 
-# cloud storage directory (can be non-cloud storage folder)
-# needed for FTP upload
+# folder they should be moved to
 STORAGE=/cloud/storage/directory
 
 # number for the -j parameter
@@ -95,7 +97,7 @@ do
 		echo "done!"
 	fi
 
-	if  [ $CLOUD = "y" ]; then
+	if  [ $MOVE = "y" ]; then
 		echo -n "Moving to cloud storage directory..."
 		cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $STORAGE/${OUTPUTNME[$VAL]}"-"$DATE".zip"
 		if [ $MD5 = "y" ]; then
