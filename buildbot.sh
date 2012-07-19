@@ -86,7 +86,7 @@ do
 		echo -n "Moving to cloud storage directory..."
 		cp $SAUCE/out/target/product/${PRODUCT[$VAL]}/${BUILDNME[$VAL]}"-ota-"$DATE".zip" $CLOUDDIR/${OUTPUTNME[$VAL]}"-"$DATE".zip"
 		if [ $MD5 = "y" ]; then
-			cp $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt" $CLOUDDIR/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt"
+			cp $SAUCE/out/target/product/toro/${BUILDNME[$VAL]}"-ota-"$DATE".md5sum.txt" $CLOUDDIR/${OUTPUTNME[$VAL]}"-ota-"$DATE".md5sum.txt"
 		fi
 		echo "done!"
 	fi
